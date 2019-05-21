@@ -1,25 +1,5 @@
 ---
-
 - hosts: localhost
-  vars:
-    resource_group: RGP-DEV-CLAIMS_INQUIRY
-    location: eastus
-    sqlserver_name: srv-azsqldev03
-    sqldb_name: sql-claims-inquiry-db
-    sqldb_version: 12.0
-    admin_username: sqladm
-    admin_password: MWM2MDY0OGJlYmQwM2YwMzVmNmM2OTBm
-    db_collation: SQL_Latin1_General_CP1_CI_AS
-    webapp_name: ClaimsInquiryApp01
-    plan_name: ClaimsInquiryPlan01
-    framework: java
-    java_version: 8
-    use_linux: false
-    num_of_workers: 1
-    az_sku: S1
-    app_server: tomcat
-    app_server_version: 8.5
-
   tasks:
     - name: Create Claims API SQL Server
       azure_rm_sqlserver:
