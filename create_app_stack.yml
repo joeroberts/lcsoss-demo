@@ -1,0 +1,63 @@
+---
+
+- hosts: localhost
+  vars:
+    resource_group: RGP-DEV-CLAIMS_INQUIRY
+    location: eastus
+    sqlserver_name: srv-azsqldev03
+    sqldb_name: sql-claims-inquiry-db
+    sqldb_version: 12.0
+    admin_username: sqladm
+    admin_password: MWM2MDY0OGJlYmQwM2YwMzVmNmM2OTBm
+    db_collation: SQL_Latin1_General_CP1_CI_AS
+    webapp_name: ClaimsInquiryApp01
+    plan_name: ClaimsInquiryPlan01
+    framework: java
+    java_version: 8
+    use_linux: false
+    num_of_workers: 1
+    az_sku: S1
+    app_server: tomcat
+    app_server_version: 8.5
+
+  tasks:
+    - name: Create Claims API SQL Server
+      azure_rm_sqlserver:
+        name: "{{sqlserver_name}}"
+        location: "{{location}}"
+        resource_group: "{{resource_group}}"
+        version: "{{sqldb_version}}"
+        admin_username: "{{admin_username}}"
+        admin_password: "{{admin_password}}"
+    - name: Add Firewall rule for Hanover Worcester location
+      azure_rm_sqlfirewallrule:
+        resource_group: "{{resource_group}}"
+        server_name: "{{sqlserver_name}}"
+        name: Hanover
+        start_ip_address: 192.147.222.1
+        end_ip_address: 192.147.222.9
+    - name: Set Allow access to Azure Services
+      azure_rm_sqlfirewallrule:
+        resource_group: "{{resource_group}}"
+        server_name: "{{sqlserver_name}}"
+        name: AzureServices
+        start_ip_address: 0.0.0.0
+        end_ip_address: 0.0.0.0
+    - name: Create Claims API Instance of SQL Database
+      azure_rm_sqldatabase:
+        resource_group: "{{resource_group}}"
+        server_name: "{{sqlserver_name}}"
+        name: "{{sqldb_name}}"
+        location: "{{location}}"
+        collation: "{{db_collation}}"
+    - name: Create Claims API App Service
+      azure_rm_webapp:
+        resource_group: "{{resource_group}}"
+        name: "{{webapp_name}}"
+        location: "{{location}}"
+        plan:
+          resource_group: "{{resource_group}}"
+          name: "{{plan_name}}"
+          location: "{{location}}"
+          is_linux: "{{use_linux}}"
+                                                          

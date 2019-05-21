@@ -1,0 +1,18 @@
+---
+ansible_port: 5986
+ansible_winrm_server_cert_validation: ignore
+ansible_connection: winrm
+ansible_winrm_transport: basic
+connection: winrm
+
+- name: Install all critical and security updates
+  win_updates:
+    category_names:
+    - CriticalUpdates
+    - SecurityUpdates
+    - UpdateRollups
+    state: installed
+  register: update_result
+  - name: reboot host if required
+    win_reboot:
+    when: update_result.reboot_required

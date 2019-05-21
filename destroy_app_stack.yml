@@ -1,0 +1,32 @@
+---
+
+- hosts: localhost
+  vars:
+    resource_group: RGP-DEV-CLAIMS_INQUIRY
+    location: eastus
+    sqlserver_name: srv-azsqldev02
+    sqldb_name: sql-claims-inquiry-db
+    webapp_name: ClaimsInquiryApp01
+    plan_name: ClaimsInquiryPlan01
+
+  tasks:
+    - name: Destroy Instance of Claims API SQL Database
+      azure_rm_sqldatabase:
+        resource_group: "{{resource_group}}"
+        server_name: "{{sqlserver_name}}"
+        name: "{{sqldb_name}}"
+        state: absent
+    - name: Destroy Claims API SQL Server
+      azure_rm_sqlserver:
+        name: "{{sqlserver_name}}"
+        resource_group: "{{resource_group}}"
+        state: absent
+    - name: Destroy Claims API App Service
+      azure_rm_webapp:
+        resource_group: "{{resource_group}}"
+        name: "{{webapp_name}}"
+        state: absent
+        plan:
+          resource_group: "{{resource_group}}"
+          name: "{{plan_name}}"
+          state: absent
